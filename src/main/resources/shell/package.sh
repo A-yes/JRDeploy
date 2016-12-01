@@ -3,34 +3,36 @@
 # SVN检出并Maven打包
 #
 # 参数：
-# $1 UUID
-# $2 SVN地址
-# $3 Jetty的start.jar路径
-# $4 项目部署路径
-# $5 版本控制系统(1.SVN;2.GIT)
-# $6 Maven profile
-# $7 Git分支
-# $8 module
-# $9 context
 
-if [ -z "$1" ]||[ -z "$4" ]; then
+# $1 部署路径
+# $2 uuid
+# $3 版本控制系统(1.SVN;2.GIT)
+# $4 VCS地址
+# $5 Git分支
+# $6 Maven profile
+# $7 module
+# $8 context
+# $9 Jetty的start.jar路径
+
+echo $1,$2,$3,$4,$5,$6,$7,$8,$9
+
+if [ -z "$1" ]||[ -z "$2" ]; then
     echo "参数不能为空"
     exit 0
 fi
+cd $1/$2
 
-rm -rf $4/$1
-mkdir -p $4/$1
-cd $4/$1
-
-if [ $5 -eq 1 ]
+if [ $3 -eq 1 ]
 then
-	svn checkout $2 .
+	svn checkout $4
 else
-	git clone $2 .
-	if [ "$7" != "null" ]; then
-        git checkout $7
+	git clone $4
+	if [ "$5" != "null" ]; then
+        git checkout $5
     fi
 fi
+
+cd $7
 
 if [ "$6" != "null" ]; then
     mvn clean package -Dmaven.test.skip=true -P$6
@@ -38,6 +40,8 @@ else
     mvn clean package -Dmaven.test.skip=true
 fi
 
-java -jar $3 --add-to-startd=http,deploy,jsp
+cd ..
 
-mv $8/target/$8.war webapps/$9.war
+java -jar $9 --add-to-startd=http,deploy,jsp
+
+mv $7/target/$7.war webapps/$8.war

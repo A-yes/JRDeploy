@@ -17,12 +17,16 @@ public class JRDeployService {
     JRDeployDao jrDeployDao;
 
     public int insert(JRDeploy jrDeploy){
-        jrDeploy.setUuid(UUID.randomUUID().toString());
+        if(jrDeploy.getProfile().equals(""))
+            jrDeploy.setProfile("null");
+        if(jrDeploy.getBranch().equals(""))
+            jrDeploy.setBranch("null");
+        jrDeploy.setContextPath(jrDeploy.getContextPath().replace("/",""));
         return jrDeployDao.insert(jrDeploy);
     }
 
-    public JRDeploy getById(int id){
-        return jrDeployDao.getById(id);
+    public JRDeploy getById(String uuid){
+        return jrDeployDao.getById(uuid);
     }
 
 

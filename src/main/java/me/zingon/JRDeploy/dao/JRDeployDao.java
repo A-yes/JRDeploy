@@ -10,10 +10,11 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface JRDeployDao {
 
-    @Insert("insert into jrdeploy(uuid,name,profile,module,context_path,port,type,branch,host,host_port,password,jrd_path,jetty_path,deleted_flag) " +
-            "values(#{uuid},#{name},#{profile},#{module},#{contextPath},#{port},#{type},#{branch},#{host},#{hostPort},#{password},#{jrdPath},#{jettyPath},#{deletedFlag})")
+    @Insert("insert into jrdeploy(uuid,name,profile,module,context_path,port,url,type,branch,host,user,host_port,password,jrd_path,jetty_path,deleted_flag) " +
+            "values(#{uuid},#{name},#{profile},#{module},#{contextPath},#{port},#{url},#{type},#{branch},#{host},#{user},#{hostPort},#{password},#{jrdPath},#{jettyPath},#{deletedFlag})")
     int insert(JRDeploy jrDeploy);
 
-    @Select("select * from jrdeploy where id=#{id}")
-    JRDeploy getById(@Param("id")int id);
+    @Select("select *,host_port as hostPort,context_path as contextPath,jrd_path as jrdPath,jetty_path as jettyPath,deleted_flag as deletedFlag" +
+            " from jrdeploy where uuid=#{uuid}")
+    JRDeploy getById(@Param("uuid")String uuid);
 }

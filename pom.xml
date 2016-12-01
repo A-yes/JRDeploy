@@ -156,7 +156,13 @@
     </dependency>
     <!-- 装饰 end -->
 
-
+    <!-- ssh start -->
+    <dependency>
+      <groupId>ch.ethz.ganymed</groupId>
+      <artifactId>ganymed-ssh2</artifactId>
+      <version>build210</version>
+    </dependency>
+    <!-- ssh end -->
 
     <!-- jsp -->
     <dependency>

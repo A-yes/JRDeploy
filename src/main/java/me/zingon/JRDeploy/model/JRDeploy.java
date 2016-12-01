@@ -15,6 +15,7 @@ public class JRDeploy {
     int type;
     String branch;
     String host;
+    String user;
     String hostPort;
     String password;
     String jrdPath;
@@ -106,6 +107,14 @@ public class JRDeploy {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getHostPort() {

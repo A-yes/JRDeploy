@@ -45,7 +45,11 @@
                                 <input type="text" id="input-profile" name="profile">
                                 <label for="input-profile">Maven profile</label>
                             </div>
-                            <div class="input-field col s6">
+                            <div class="input-field col s3">
+                                <input type="text" id="input-user" name="user">
+                                <label for="input-user">用户名</label>
+                            </div>
+                            <div class="input-field col s3">
                                 <input type="password" id="input-password" name="password">
                                 <label for="input-password">服务器密码</label>
                             </div>
@@ -73,7 +77,7 @@
                                 <input type="text" id="input-url" name="url">
                                 <label for="input-url">SVN/GIT地址</label>
                             </div>
-                            <div class="input-field col s6" style="min-height: 70px;">
+                            <div class="input-field col s6">
                                 <input class="with-gap" name="type" type="radio" id="input-svn" checked="checked"
                                        value="1"/>
                                 <label for="input-svn">SVN</label>
@@ -88,13 +92,12 @@
                     </div>
                     <div class="card-action">
                         <p>
-                            <button type="submit" class="btn waves-light waves-effect white-text">提交</button>
+                            <button id="ok" type="button" class="btn waves-light waves-effect white-text">提交</button>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </form>
 
@@ -107,7 +110,31 @@
                 $(".input-field-branch").fadeOut();
             }
         });
+
+        $("#ok").click(function(){
+            var host=$("#input-host").val().trim();
+            var hostPot=$("#input-host-port").val().trim();
+            var user=$("#input-user").val().trim();
+            var password=$("#input-password").val().trim();
+            var ii = layer.load();
+            $.get("${pageContext.request.contextPath}/jrd/checkSsh.api", {
+                        host : host,
+                        port : hostPot,
+                        user : user,
+                        password : password
+                    },function(data){
+                        layer.close(ii);
+                        if(data == true){
+                            $('#form-new').submit();
+                        }
+                        else
+                            layer.msg("远端服务器登陆失败！");
+                    }
+            );
+        });
     });
+
+
 </script>
 </body>
 </html>
