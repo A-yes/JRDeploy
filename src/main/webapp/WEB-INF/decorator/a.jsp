@@ -23,7 +23,7 @@
 <body style="font-family: 'Roboto', 'Droid Sans Fallback', '微软雅黑';min-height: 100vh;display: flex;flex-direction: column;">
 <nav>
     <div class="nav-wrapper">
-        <a href="${pageContext.request.contextPath}/" class="brand-logo center">JavaWeb远程自动化部署平台</a>
+        <a href="${pageContext.request.contextPath}/jrd/list.@-@" class="brand-logo center">JavaWeb远程自动化部署平台</a>
     </div>
 </nav>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.min.js"></script>

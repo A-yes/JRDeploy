@@ -4,13 +4,17 @@ import me.zingon.JRDeploy.model.JRDeploy;
 import me.zingon.JRDeploy.service.JRDeployService;
 import me.zingon.JRDeploy.service.SshService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -26,11 +30,35 @@ public class JRDeployController {
     @Autowired
     SshService sshService;
 
+    @Value("${user.name}")
+    String U;
+
+    @Value("${uset.password}")
+    String P;
+
+    @RequestMapping("/login.*")
+    public String login(@RequestParam("user")String user,
+                        @RequestParam("password")String password,
+                        HttpServletRequest req){
+        if(user.equals(U) && password.equals(P)) {
+            req.getSession().setAttribute("user",user);
+            return "redirect:/jrd/list.@-@";
+        }
+        else
+            return "redirect:/";
+    }
+
     @RequestMapping("/new.*")
     public String newJrd(JRDeploy jrDeploy){
         jrDeploy.setUuid(UUID.randomUUID().toString());
         jrDeployService.insert(jrDeploy);
         return "redirect:/jrd/detail.@-@?uuid="+jrDeploy.getUuid();
+    }
+
+    @RequestMapping("/list.*")
+    public String list(Model model){
+        model.addAttribute("javaWebDeployList", jrDeployService.getList());
+        return "list";
     }
 
     @RequestMapping("/detail.*")
@@ -67,7 +95,28 @@ public class JRDeployController {
     @ResponseBody
     public String deploy(@RequestParam("uuid") String uuid) throws IOException {
         JRDeploy jrDeploy=jrDeployService.getById(uuid);
-        return sshService.deploy(jrDeploy.getHost(),jrDeploy.getHostPort(),jrDeploy).replace("\r\n","<br/>");
+        return sshService.deploy(jrDeploy).replace("\r\n","<br/>");
+    }
+
+    @RequestMapping("/start.api")
+    @ResponseBody
+    public String start(@RequestParam("uuid") String uuid) throws IOException {
+        JRDeploy jrDeploy=jrDeployService.getById(uuid);
+        return sshService.start(jrDeploy).replace("\r\n","<br/>");
+    }
+
+    @RequestMapping("/stop.api")
+    @ResponseBody
+    public String stop(@RequestParam("uuid")String uuid) throws IOException {
+        JRDeploy jrDeploy=jrDeployService.getById(uuid);
+        return sshService.stop(jrDeploy);
+    }
+
+    @RequestMapping("/isrunning.api")
+    @ResponseBody
+    public Object isrunning(@RequestParam("uuid")String uuid) throws IOException {
+        JRDeploy jrDeploy=jrDeployService.getById(uuid);
+        return sshService.isRunning(jrDeploy);
     }
 
 

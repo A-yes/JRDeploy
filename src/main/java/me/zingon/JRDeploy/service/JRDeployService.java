@@ -5,6 +5,7 @@ import me.zingon.JRDeploy.model.JRDeploy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -22,11 +23,17 @@ public class JRDeployService {
         if(jrDeploy.getBranch().equals(""))
             jrDeploy.setBranch("null");
         jrDeploy.setContextPath(jrDeploy.getContextPath().replace("/",""));
+        if(jrDeploy.getContextPath().equals(""))
+            jrDeploy.setContextPath("root");
         return jrDeployDao.insert(jrDeploy);
     }
 
     public JRDeploy getById(String uuid){
         return jrDeployDao.getById(uuid);
+    }
+
+    public List<JRDeploy> getList(){
+        return jrDeployDao.getList();
     }
 
 

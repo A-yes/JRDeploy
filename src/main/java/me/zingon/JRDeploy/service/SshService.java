@@ -38,8 +38,19 @@ public class SshService {
     public String execCommand(String host,String port,String command) throws IOException {
         StringBuilder sb=new StringBuilder();
         Connection con=ConMap.getCon(host+"_" +port);
-        Session session=con.openSession();
-        session.execCommand(command);
+        Session session=null;
+        try {
+            session = con.openSession();
+            session.execCommand(command);
+        }catch (IOException e){
+            if(session!=null)
+                session.close();
+            return "Command exec error!";
+        }catch (NullPointerException e){
+            if(session!=null)
+                session.close();
+            return "need login";
+        }
         InputStream inerr=new StreamGobbler(session.getStderr());
         BufferedReader brerr=new BufferedReader(new InputStreamReader(inerr));
         InputStream in=new StreamGobbler(session.getStdout());
@@ -61,11 +72,11 @@ public class SshService {
         return sb.toString();
     }
 
-    public String deploy(String host, String port, JRDeploy jrDeploy) throws IOException {
+    public String deploy(JRDeploy jrDeploy) throws IOException {
         StringBuilder sb=new StringBuilder();
-        sb.append(execCommand(host,port,initGet));
-        sb.append(execCommand(host,port,initStart+" "+jrDeploy.getJrdPath()+" "+jrDeploy.getUuid()));
-        sb.append(execCommand(host,port,"sh "+jrDeploy.getJrdPath()
+        sb.append(execCommand(jrDeploy.getHost(),jrDeploy.getHostPort(),initGet));
+        sb.append(execCommand(jrDeploy.getHost(),jrDeploy.getHostPort(),initStart+" "+jrDeploy.getJrdPath()+" "+jrDeploy.getUuid()));
+        sb.append(execCommand(jrDeploy.getHost(),jrDeploy.getHostPort(),"sh "+jrDeploy.getJrdPath()
                                 +"/"+jrDeploy.getUuid()+"/shell/package.sh "
                                 +jrDeploy.getJrdPath()+" "
                                 +jrDeploy.getUuid()+" "
@@ -78,6 +89,30 @@ public class SshService {
                                 +jrDeploy.getJettyPath())
         );
         return sb.toString();
+    }
+
+
+    public String start(JRDeploy jrDeploy) throws IOException {
+        StringBuilder sb=new StringBuilder();
+        sb.append(execCommand(jrDeploy.getHost(), jrDeploy.getHostPort(),
+                            "sh " + jrDeploy.getJrdPath() + "/" + jrDeploy.getUuid()+"/shell/start.sh "
+                            +jrDeploy.getJrdPath()+" "
+                            +jrDeploy.getUuid()+" "
+                            +jrDeploy.getJettyPath()+" "
+                            +jrDeploy.getPort())
+        );
+        return sb.toString();
+    }
+
+    public String stop(JRDeploy jrDeploy) throws IOException {
+        StringBuilder sb=new StringBuilder();
+        sb.append(execCommand(jrDeploy.getHost(),jrDeploy.getHostPort(),"pkill -f "+jrDeploy.getUuid()));
+        return sb.toString().equals("")? "已停止" : sb.toString();
+    }
+
+    public boolean isRunning(JRDeploy jrDeploy) throws IOException {
+        return execCommand(jrDeploy.getHost(),jrDeploy.getHostPort(), "ps -aux | grep "+jrDeploy.getUuid())
+                .contains("projectuuid");
     }
 
 }

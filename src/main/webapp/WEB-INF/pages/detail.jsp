@@ -19,7 +19,7 @@
         <div class="col s6">
             <div class="card">
                 <div class="card-content">
-                    <span class="card-title red-text">项目信息</span>
+                    <span class="card-title grey-text">项目信息</span>
                     <p><B>名称：</B>${detail.name}</p>
                     <p><B>UUID：</B><span id="text-uuid">${detail.uuid}</span></p>
                     <p><B>Maven profile：</B>${detail.profile}</p>
@@ -37,6 +37,8 @@
                 <div class="card-action">
                     <p>
                         <button class="btn waves-light waves-effect white-text" id="btn-deploy">部署</button>
+                        <button class="btn waves-light waves-effect white-text" id="btn-start">运行</button>
+                        <button class="btn waves-light waves-effect white-text" id="btn-stop">停止</button>
                     </p>
                 </div>
             </div>
@@ -45,10 +47,10 @@
             <div class="card">
                 <div class="card-content">
                     <span class="card-title grey-text">服务器信息</span>
-                    <p class="service-status"><B>Host : </B>${detail.host}</p>
-                    <p class="service-status"><B>Port : </B>${detail.hostPort}</p>
-                    <p class="service-status"><B>User : </B>${detail.user}</p>
-                    <p class="service-status" hidden><B>PassWord : </B>${detail.password}</p>
+                    <p class="service-status"><B>Host : </B><span id="text-host">${detail.host}</span></p>
+                    <p class="service-status"><B>Port : </B><span id="text-hostPost">${detail.hostPort}</span></p>
+                    <p class="service-status"><B>User : </B><span id="text-user">${detail.user}</span></p>
+                    <p class="service-status" hidden><B>PassWord : </B><span id="text-password">${detail.password}</span></p>
                     <p class="service-status"><B>部署路径 : </B>${detail.jrdPath}</p>
                     <p class="service-status"><B>Jetty start.jar路径 : </B>${detail.jettyPath}</p>
                 </div>
@@ -59,7 +61,7 @@
                     <p class="service-status">
                         <span class="green-text" style="display: none;">正在运行</span>
                         <span class="red-text" style="display: none;">已停止</span>
-                        <span class="grey-text">获取中...</span>
+                        <span class="blue-grey-text">获取中...</span>
                     </p>
                 </div>
                 <div class="card-action">
@@ -71,27 +73,101 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function(){
+        isrunning();
+
         $("#btn-deploy").click(function(){
             var uuid=$("#text-uuid").text();
+            var l = layer.load();
             $.get("${pageContext.request.contextPath}/jrd/deploy.api",{
                 uuid : uuid
             },function (data){
+                layer.close(l);
+                if(data.indexOf("login")>0) {
+                    login();
+                    return;
+                }
+                isrunning();
+                layer.alert(data);
+            });
+        });
+
+        $("#btn-start").click(function(){
+            var l = layer.load();
+            var uuid=$("#text-uuid").text();
+            $.get("${pageContext.request.contextPath}/jrd/start.api",{
+                uuid : uuid
+            },function (data){
+                layer.close(l);
+                if(data.indexOf("login")>0) {
+                    login();
+                    return;
+                }
+                isrunning();
+                layer.alert(data);
+            });
+        });
+
+        $("#btn-stop").click(function(){
+            var uuid=$("#text-uuid").text();
+            $.get("${pageContext.request.contextPath}/jrd/stop.api",{
+                uuid : uuid
+            },function (data){
+                if(data.indexOf("login")>0) {
+                    login();
+                    return;
+                }
+                isrunning();
                 layer.alert(data);
             });
         });
     });
 
+    function login(){
+        layer.prompt({title: '输入服务器密码，并确认', formType: 1}, function(pass, index){
+            var host=$("#text-host").text();
+            var hostPort=$("#text-hostPost").text();
+            var user=$("#text-user").text();
+            var passwd=$("#text-password").text();
+            var l = layer.load();
+            $.get("${pageContext.request.contextPath}/jrd/checkSsh.api",{
+                host : host,
+                port :hostPort,
+                user :user,
+                password : pass
+            },function (data){
+                if(data == true){
+                    layer.close(index);
+                    layer.msg("登陆成功！");
+                }
+                else
+                    layer.msg("密码错误！");
+                layer.close(l);
+            });
+
+        });
+
+    }
 
 
-    function execCommand(host,port,command){
-        $.get("${pageContext.request.contextPath}/jrd/exec.api",
+    function isrunning(){
+        var uuid=$("#text-uuid").text();
+        $.get("${pageContext.request.contextPath}/jrd/isrunning.api",
                 {
-                    host : host,
-                    port : port,
-                    command : command
+                    uuid : uuid
                 },
                 function(data){
-                    layer.alert(data);
+                    if(data.indexOf("login")>0) {
+                        login();
+                        return;
+                    }
+                    $(".blue-grey-text").show();
+                    $(".green-text").hide();
+                    $(".red-text").hide();
+                    if(data == true)
+                        $(".green-text").show();
+                    else
+                        $(".red-text").show();
+                    $(".blue-grey-text").hide();
                 }
         );
     }

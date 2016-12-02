@@ -7,6 +7,7 @@ if [ -z "$1" ]||[ -z "$2" ]; then
 fi
 mkdir -p $1/$2/shell
 cd $1/$2/shell
-wget -c http://publiclass.oss-cn-shanghai.aliyuncs.com/jrdeploy/package.sh
+wget -O package.sh http://publiclass.oss-cn-shanghai.aliyuncs.com/jrdeploy/package.sh
+wget -O start.sh http://publiclass.oss-cn-shanghai.aliyuncs.com/jrdeploy/start.sh
 cd ~
 rm -- "$0"

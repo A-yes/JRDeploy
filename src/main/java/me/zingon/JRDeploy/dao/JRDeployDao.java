@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * Created by ZTC on 11/30/2016.
  */
@@ -17,4 +19,8 @@ public interface JRDeployDao {
     @Select("select *,host_port as hostPort,context_path as contextPath,jrd_path as jrdPath,jetty_path as jettyPath,deleted_flag as deletedFlag" +
             " from jrdeploy where uuid=#{uuid}")
     JRDeploy getById(@Param("uuid")String uuid);
+
+    @Select("select *,host_port as hostPort,context_path as contextPath,jrd_path as jrdPath,jetty_path as jettyPath,deleted_flag as deletedFlag" +
+            " from jrdeploy")
+    List<JRDeploy> getList();
 }
