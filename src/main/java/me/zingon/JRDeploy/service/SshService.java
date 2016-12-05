@@ -110,9 +110,15 @@ public class SshService {
         return sb.toString().equals("")? "已停止" : sb.toString();
     }
 
-    public boolean isRunning(JRDeploy jrDeploy) throws IOException {
-        return execCommand(jrDeploy.getHost(),jrDeploy.getHostPort(), "ps -aux | grep "+jrDeploy.getUuid())
-                .contains("projectuuid");
+    public String isRunning(JRDeploy jrDeploy) throws IOException {
+        String result = execCommand(jrDeploy.getHost(),jrDeploy.getHostPort(), "ps -aux | grep "+jrDeploy.getUuid());
+        if(result.contains("projectuuid")){
+            return "true";
+        }else if(result.contains("login")){
+            return "need login";
+        }else {
+            return "false";
+        }
     }
 
 }

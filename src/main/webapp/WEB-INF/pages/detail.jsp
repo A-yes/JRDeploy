@@ -61,6 +61,7 @@
                     <p class="service-status">
                         <span class="green-text" style="display: none;">正在运行</span>
                         <span class="red-text" style="display: none;">已停止</span>
+                        <span class="yellow-text" style="display: none;">点击左侧任一按钮登陆</span>
                         <span class="blue-grey-text">获取中...</span>
                     </p>
                 </div>
@@ -156,17 +157,16 @@
                     uuid : uuid
                 },
                 function(data){
-                    if(data.indexOf("login")>0) {
-                        login();
-                        return;
-                    }
                     $(".blue-grey-text").show();
                     $(".green-text").hide();
                     $(".red-text").hide();
-                    if(data == true)
-                        $(".green-text").show();
-                    else
+                    $(".yellow-text").hide();
+                    if(data == "true")
+                        $("green-text").show();
+                    else if(data == "false")
                         $(".red-text").show();
+                    else
+                        $(".yellow-text").show();
                     $(".blue-grey-text").hide();
                 }
         );

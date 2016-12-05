@@ -31,7 +31,8 @@
     <!-- 控制资源文件不走mvc -->
     <mvc:default-servlet-handler />
     <mvc:resources mapping="/static/**" location="/static/" />
-    
+
+    <context:property-placeholder location="classpath:config/config.properties" />
     <context:component-scan base-package="me.zingon.JRDeploy.controller">
         <context:include-filter type="annotation"
                                 expression="org.springframework.stereotype.Controller"/>

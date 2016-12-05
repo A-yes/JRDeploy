@@ -60,4 +60,20 @@
     <url-pattern>/druid/*</url-pattern>
   </servlet-mapping>
 
+  <filter>
+    <filter-name>login</filter-name>
+    <filter-class>me.zingon.JRDeploy.web.LoginFilter</filter-class>
+    <init-param>
+      <param-name>ignoreList</param-name>
+      <param-value>index.jsp,jrd/login.@-@</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>login</filter-name>
+    <url-pattern>*.@-@</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>login</filter-name>
+    <url-pattern>*.api</url-pattern>
+  </filter-mapping>
 </web-app>

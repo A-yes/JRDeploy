@@ -13,10 +13,34 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
+//                       _oo0oo_
+//                      o8888888o
+//                      88" . "88
+//                      (| -_- |)
+//                      0\  =  /0
+//                    ___/`---'\___
+//                  .' \\|     |// '.
+//                 / \\|||  :  |||// \
+//                / _||||| -:- |||||- \
+//               |   | \\\  -  /// |   |
+//               | \_|  ''\---/''  |_/ |
+//               \  .-\__  '-'  ___/-. /
+//             ___'. .'  /--.--\  `. .'___
+//          ."" '<  `.___\_<|>_/___.' >' "".
+//         | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+//         \  \ `_.   \_ __\ /__ _/   .-` /  /
+//     =====`-.____`.___ \_____/___.-`___.-'=====
+//                       `=---='
+//
+//
+//     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//               佛祖保佑         永无BUG
+//
+//
+//
 /**
  * Created by ZTC on 11/30/2016.
  */
@@ -30,17 +54,17 @@ public class JRDeployController {
     @Autowired
     SshService sshService;
 
-    @Value("${user.name}")
-    String U;
+    @Value("${my.user.name}")
+    String u;
 
-    @Value("${uset.password}")
-    String P;
+    @Value("${my.user.password}")
+    String p;
 
     @RequestMapping("/login.*")
     public String login(@RequestParam("user")String user,
                         @RequestParam("password")String password,
                         HttpServletRequest req){
-        if(user.equals(U) && password.equals(P)) {
+        if(user.equals(u) && password.equals(p)) {
             req.getSession().setAttribute("user",user);
             return "redirect:/jrd/list.@-@";
         }
@@ -114,7 +138,7 @@ public class JRDeployController {
 
     @RequestMapping("/isrunning.api")
     @ResponseBody
-    public Object isrunning(@RequestParam("uuid")String uuid) throws IOException {
+    public String isrunning(@RequestParam("uuid")String uuid) throws IOException {
         JRDeploy jrDeploy=jrDeployService.getById(uuid);
         return sshService.isRunning(jrDeploy);
     }
