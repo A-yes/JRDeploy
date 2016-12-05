@@ -66,7 +66,7 @@
                     </p>
                 </div>
                 <div class="card-action">
-                    <a href="#" class="btn-showlog" data-wsurl="ws://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/log?uuid=${detail.uuid}&type=javaweb">查看日志</a>
+                    <button class="btn waves-light waves-effect white-text" id="btn-running">刷新状态</button>
                 </div>
             </div>
         </div>
@@ -79,7 +79,7 @@
         $("#btn-deploy").click(function(){
             var uuid=$("#text-uuid").text();
             var l = layer.load();
-            $.get("${pageContext.request.contextPath}/jrd/deploy.api",{
+            $.get("${pageContext.request.contextPath}/jrd/deploy.api?a="+Math.random(),{
                 uuid : uuid
             },function (data){
                 layer.close(l);
@@ -88,14 +88,16 @@
                     return;
                 }
                 isrunning();
-                layer.alert(data);
+                layer.alert(data,{
+                    area: ['800px','400px']
+                });
             });
         });
 
         $("#btn-start").click(function(){
             var l = layer.load();
             var uuid=$("#text-uuid").text();
-            $.get("${pageContext.request.contextPath}/jrd/start.api",{
+            $.get("${pageContext.request.contextPath}/jrd/start.api?a="+Math.random(),{
                 uuid : uuid
             },function (data){
                 layer.close(l);
@@ -110,7 +112,7 @@
 
         $("#btn-stop").click(function(){
             var uuid=$("#text-uuid").text();
-            $.get("${pageContext.request.contextPath}/jrd/stop.api",{
+            $.get("${pageContext.request.contextPath}/jrd/stop.api?a="+Math.random(),{
                 uuid : uuid
             },function (data){
                 if(data.indexOf("login")>0) {
@@ -121,6 +123,10 @@
                 layer.alert(data);
             });
         });
+
+        $("#btn-running").click(function(){
+            isrunning();
+        });
     });
 
     function login(){
@@ -130,7 +136,7 @@
             var user=$("#text-user").text();
             var passwd=$("#text-password").text();
             var l = layer.load();
-            $.get("${pageContext.request.contextPath}/jrd/checkSsh.api",{
+            $.get("${pageContext.request.contextPath}/jrd/checkSsh.api?a="+Math.random(),{
                 host : host,
                 port :hostPort,
                 user :user,
@@ -152,7 +158,7 @@
 
     function isrunning(){
         var uuid=$("#text-uuid").text();
-        $.get("${pageContext.request.contextPath}/jrd/isrunning.api",
+        $.get("${pageContext.request.contextPath}/jrd/isrunning.api?a="+Math.random(),
                 {
                     uuid : uuid
                 },
@@ -162,7 +168,7 @@
                     $(".red-text").hide();
                     $(".yellow-text").hide();
                     if(data == "true")
-                        $("green-text").show();
+                        $(".green-text").show();
                     else if(data == "false")
                         $(".red-text").show();
                     else

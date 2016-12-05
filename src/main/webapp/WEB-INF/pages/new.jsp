@@ -112,10 +112,61 @@
         });
 
         $("#ok").click(function(){
+            var name=$("#input-name").val().trim();
+            var module=$("#input-module").val().trim();
+            var contextPath=$("#input-contextPath").val().trim();
+            var port=$("#input-port").val().trim();
+            var url=$("#input-url").val().trim();
+            var jrdPath=$("#input-jrdPath").val().trim();
+            var jetty=$("#input-jettyPath").val().trim();
+
             var host=$("#input-host").val().trim();
             var hostPot=$("#input-host-port").val().trim();
             var user=$("#input-user").val().trim();
             var password=$("#input-password").val().trim();
+
+            if(name==""){
+                layer.msg("名称不能为空",{
+                    time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                });
+                return;
+            }
+            if(module==""){
+                layer.msg("module不能为空",{
+                    time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                });
+                return;
+            }
+            if(contextPath==""){
+                layer.msg("contextPath不能为空",{
+                    time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                });
+                return;
+            }
+            if(port==""){
+                layer.msg("部署web端口号不能为空",{
+                    time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                });
+                return;
+            }
+            if(url==""){
+                layer.msg("SVN/GIT地址不能为空",{
+                    time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                });
+                return;
+            }
+            if(jrdPath==""){
+                layer.msg("部署路径不能为空",{
+                    time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                });
+                return;
+            }
+            if(jetty==""){
+                layer.msg("jetty-start.jar不能为空",{
+                    time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                });
+                return;
+            }
             var ii = layer.load();
             $.get("${pageContext.request.contextPath}/jrd/checkSsh.api", {
                         host : host,
